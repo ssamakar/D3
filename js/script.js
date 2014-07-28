@@ -22,29 +22,34 @@ d3.select('#barGraph').selectAll('p')
 		return d*5 + "px";
 	});
 
-//svg time!
+//svg time! here we define svg variables we'll reuse again and again.
 var w = 500,
 		h = 200,
 		circleColor = 'blue',
 		strokeColor = 'yellow',
 		padding = 1;
 
-var circlesvg = d3.select('body')
+
+//inserting an svg element into the #balls div.
+//we're using the variables we defined just up above.
+var circlesvg = d3.select('#balls')
 			.append('svg')
 			.attr('width', w)
 			.attr('height', h);
 
 
 // circle time!
+// appending one circle for each piece of data in our dataset
 circles = circlesvg.selectAll('circle')
 						.data(dataSet)
 						.enter()
 						.append('circle');
 
+//modifying attributes of the circles.
 circles.attr('cx', function(d, i){
 					return (i*75) + 25;
 				})
-				.attr('cy', h/2)
+				.attr('cy', h/1.5)
 				.attr('r', function(d){
 					return d
 				})
@@ -56,17 +61,21 @@ circles.attr('cx', function(d, i){
 				.attr('fill', circleColor);
 
 
-var barsvg = d3.select('body')
+//now let's make a bar graph using SVG rectangles instead of divs.
+var barsvg = d3.select('#barGraphSVG')
 			.append('svg')
 			.attr('width', w)
 			.attr('height', h);
 
-//an svg bar chart
+
+//create one rectangle for each data point.
 bars = barsvg.selectAll('rect')
 				.data(dataSet2)
 				.enter()
 				.append('rect');
 
+//adjust the attributes of the bars.
+//you'll notice this notation is different than how we adjusted the circle attributes. both ways work but this way is cleaner imo.
 bars.attr({
 	'x': function(d, i){return i*(w / dataSet2.length)},
 	'y': function(d){return h - (d * 4);},
@@ -79,16 +88,17 @@ bars.attr({
 });
 
 
-text = svg.selectAll('text')
+//let's add some text to each bar.
+text = barsvg.selectAll('text')
 				.data(dataSet2)
 				.enter()
 				.append('text')
 				.text(function(d){
 					return d;
 				})
-
+//and adjust the text's attributes.
 text.attr({
-	'x': function(d, i){return i * (w / dataSet2.length) + (w / dataSet3.length - padding) / 2},
+	'x': function(d, i){return i * (w / dataSet2.length) + (w / dataSet2.length - padding) / 2},
 	'y': function(d){return h - (d * 4) + 14;},
 	'font-family': 'sans-serif',
 	'font-size': '11px',
