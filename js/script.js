@@ -10,6 +10,11 @@ for (var i = 0; i < 25; i++) {
     dataSet3.push(newNumber);
 }
 
+var scatterplotData = [
+                [480, 90], [250, 50], [100, 33], [330, 95],
+                [410, 12], [475, 44], [25, 67], [85, 21], [220, 88]
+              ];
+
 // http://www.whitehouse.gov/facts/json/progress/all
 
 //Make a bar graph using your random dataset
@@ -24,7 +29,7 @@ d3.select('#barGraph').selectAll('p')
 
 //svg time! here we define svg variables we'll reuse again and again.
 var w = 500,
-		h = 200,
+		h = 150,
 		circleColor = 'blue',
 		strokeColor = 'yellow',
 		padding = 1;
@@ -104,4 +109,111 @@ text.attr({
 	'font-size': '11px',
 	'fill': 'white',
 	'text-anchor': 'middle'
-})
+});
+
+//let's make a scatterplot now.
+scatterplotSVG = d3.select('#scatterplot')
+	.append('svg')
+	.attr({
+		'width': w,
+		'height': h
+	});
+
+scatterplotSVG.selectAll('circle')
+	.data(scatterplotData)
+	.enter()
+	.append('circle')
+	.attr({
+		'cx': function(d){return d[0]},
+		'cy': function(d){return d[1]},
+		'r' : function(d){return Math.sqrt(h - d[1])}
+	});
+
+scatterplotSVG.selectAll('text')
+	.data(scatterplotData)
+	.enter()
+	.append('text')
+	.text(function(d){
+		return d[0] + "," + d[1];
+	})
+	.attr({
+		'x': function(d){return d[0]},
+		'y': function(d){return d[1]},
+		'font-family': 'sans-serif',
+		'font-size': '11px',
+		'fill': 'red'
+	});
+
+
+//let's learn to scale our scatterplot to fit our data.
+//we're wrapping all of this in a function so we can call it with an html button later.
+makeScatterplot = function(){
+	scatterplotPadding = 20;
+	xScale = d3.scale.linear()
+									 .domain([0, d3.max(scatterplotData, function(d){
+									 		return d[0] 
+									 	})])
+									 .range([scatterplotPadding, w - scatterplotPadding * 2]);
+
+	yScale = d3.scale.linear()
+									 .domain([0, d3.max(scatterplotData, function(d){
+									 		return d[1]
+									 })])
+									 .range([h - scatterplotPadding, scatterplotPadding]);
+
+	rScale = d3.scale.linear()
+	                 .domain([0, d3.max(scatterplotData, function(d) { return d[1]; })])
+	                 .range([2, 5]);
+
+	scaledPlot = d3.select('#scaledPlot')
+	 .append('svg')
+	 .attr({
+	 	'width': w,
+	 	'height': h
+	 });
+
+	scaledPlot.selectAll('circle')
+		.data(scatterplotData)
+		.enter()
+		.append('circle')
+		.attr({
+			'cx': function(d){return xScale(d[0])},
+			'cy': function(d){return yScale(d[1])},
+			'r': function(d){return rScale(d[1])}
+		});
+
+	scaledPlot.selectAll('text')
+		.data(scatterplotData)
+		.enter()
+		.append('text')
+		.text(function(d){
+			return d[0] + "," + d[1];
+		})
+		.attr({
+			'x': function(d){return xScale(d[0])},
+			'y': function(d){return yScale(d[1])},
+			'font-family': 'sans-serif',
+			'font-size': '11px',
+			'fill': 'red'
+		});
+};
+
+makeScatterplot();
+
+
+
+//now that we've scaled everything down, this button will add or remove some outliers to the scatterplot so we can watch it scale.
+
+var outlierToggle = document.getElementById('outlierToggle')
+addOutliers = function(){
+	document.getElementById('scaledPlot').innerHTML = "";
+	if (outlierToggle.checked == true){
+		scatterplotData.push([900, 200]);
+		scatterplotData.unshift([700, 100]);
+		makeScatterplot();
+	} else {
+		scatterplotData.pop();
+		scatterplotData.shift();
+		makeScatterplot();
+	}
+};

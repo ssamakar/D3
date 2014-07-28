@@ -1,5 +1,5 @@
-#barGraph {
-	margin-bottom: 20px;
+div:not(.bar) {
+	margin-bottom: 10%;
 }
 
 .bar {
@@ -8,4 +8,8 @@
 	height: 75px;
 	background-color: teal;
 	margin-right: 2px;
+}
+
+svg {
+	border: 1px solid black;
 }
