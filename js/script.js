@@ -15,6 +15,7 @@ var scatterplotData = [
                 [410, 12], [475, 44], [25, 67], [85, 21], [220, 88]
               ];
 
+// do something w this maybe i guess
 // http://www.whitehouse.gov/facts/json/progress/all
 
 //Make a bar graph using your random dataset
@@ -148,30 +149,36 @@ scatterplotSVG.selectAll('text')
 //let's learn to scale our scatterplot to fit our data.
 //we're wrapping all of this in a function so we can call it with an html button later.
 makeScatterplot = function(){
-	scatterplotPadding = 20;
+	scatterplotPadding = 30;
+
+	//setting the domain and range of each scale
 	xScale = d3.scale.linear()
-									 .domain([0, d3.max(scatterplotData, function(d){
-									 		return d[0] 
-									 	})])
-									 .range([scatterplotPadding, w - scatterplotPadding * 2]);
+				 .domain([0, d3.max(scatterplotData, function(d){
+				 		return d[0] 
+				 	})])
+				 .range([scatterplotPadding, w - scatterplotPadding * 2]);
 
 	yScale = d3.scale.linear()
-									 .domain([0, d3.max(scatterplotData, function(d){
-									 		return d[1]
-									 })])
-									 .range([h - scatterplotPadding, scatterplotPadding]);
+				 .domain([0, d3.max(scatterplotData, function(d){
+				 		return d[1]
+				 })])
+				 .range([h - scatterplotPadding, scatterplotPadding]);
 
 	rScale = d3.scale.linear()
-	                 .domain([0, d3.max(scatterplotData, function(d) { return d[1]; })])
-	                 .range([2, 5]);
+	             .domain([0, d3.max(scatterplotData, function(d){
+	             	return d[1];
+	         	 })])
+	             .range([2, 5]);
 
+    //appending an svg element
 	scaledPlot = d3.select('#scaledPlot')
-	 .append('svg')
-	 .attr({
-	 	'width': w,
-	 	'height': h
-	 });
+				 .append('svg')
+				 .attr({
+				 	'width': w,
+				 	'height': h
+				 });
 
+	//creating a circle for every data point, then appending it.
 	scaledPlot.selectAll('circle')
 		.data(scatterplotData)
 		.enter()
@@ -196,6 +203,31 @@ makeScatterplot = function(){
 			'font-size': '11px',
 			'fill': 'red'
 		});
+
+	//let's make axes now.
+	xAxis = d3.svg.axis();
+	xAxis.scale(xScale)
+		 .orient('bottom')
+		 .ticks(10);
+
+	yAxis = d3.svg.axis();
+	yAxis.scale(yScale)
+		 .orient('left')
+		 .ticks(10);
+
+	scaledPlot.append('g')
+		.attr({
+			'class': 'axis',
+			'transform': 'translate(0,' + (h - scatterplotPadding) + ')'
+		})
+    	.call(xAxis);
+
+	scaledPlot.append('g')
+		.attr({
+			'class': 'axis',
+			'transform': 'translate(' + (scatterplotPadding) + ')'
+		})
+    	.call(yAxis);
 };
 
 makeScatterplot();
@@ -217,3 +249,7 @@ addOutliers = function(){
 		makeScatterplot();
 	}
 };
+
+
+//let's learn to use axes now.
+
