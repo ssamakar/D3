@@ -30,10 +30,10 @@ d3.select('#barGraph').selectAll('p')
 
 //svg time! here we define svg variables we'll reuse again and again.
 var w = 500,
-		h = 150,
-		circleColor = 'blue',
-		strokeColor = 'yellow',
-		padding = 1;
+	h = 150,
+	circleColor = 'blue',
+	strokeColor = 'yellow',
+	padding = 1;
 
 
 //inserting an svg element into the #balls div.
@@ -249,7 +249,3 @@ addOutliers = function(){
 		makeScatterplot();
 	}
 };
-
-
-//let's learn to use axes now.
-
